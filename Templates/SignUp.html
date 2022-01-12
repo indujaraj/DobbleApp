@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <!-- CSS only -->
+
+    <title>Welcome to Social</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'main/css/bootstrap.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'main/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'main/css/font-awesome.css' %}" rel="stylesheet">
+    <style>
+      .welcome{
+      margin-left:800px;
+      }
+      .btn{
+      margin-left:65px;
+      }
+         h1{
+      text-align:center;
+      }
+       a{
+       margin-left:200px;
+       }
+       .container1{
+       width:30%;
+       margin-top:0px;
+       }
+         .container{
+        width:40%;
+        margin-left:400px;
+
+    }
+    .col{
+    margin-top:-38px;
+    }
+
+    </style>
+     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+        integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  </head>
+
+  <body>
+
+         <div class="parent-container d-flex">
+            <div class="container1">
+                <div class="row">
+                    <div class="col">
+                        <img src="{% static 'main/images/img.png' %}" width="800px" height="800px" alt="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <h1 style="">Sign Up</h1>
+                <div class="row justify-content-center mt-5">
+                    <div class="col">
+                        <form action="" method="post" enctype="multipart/form-data">
+                                {%csrf_token%}
+                                {{form.as_p}}
+
+                            <a><button class="btn btn-warning" type="submit">Submit</button></a><br>
+
+                        </form>
+
+                        <a id="new" href="{% url 'login' %}">Already a member?Sign In!!</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+  </body>
+</html>

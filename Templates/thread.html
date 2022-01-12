@@ -1,0 +1,189 @@
+<!doctype html>
+{%load static%}
+<html lang="en">
+  <head>
+  	<title>Dobble</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+     integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+      <style>
+         .content{
+            margin-left:200px;
+         }
+         .card{
+         margin-left:200px;
+         }
+         #convbt{
+         margin-left:200px;
+         }
+         .sent-message {
+            background-color:  navajowhite;
+                color:black;
+                border-radius: 30px;
+                padding: 10px 40px;
+                margin-bottom:10px;
+                margin-left:5px;
+                 width: 30%
+            }
+
+         .received-message {
+            background-color:white;
+            border:solid black;
+            color:black;
+            border-radius: 30px;
+            padding: 10px 25px;
+            width: 30%;
+            float: right;
+            margin-bottom:10px;
+
+         }
+          .msg{
+            margin-left:500px;
+          }
+
+          .empty-text {
+                color: #777;
+                font-size: 1.5rem;
+                text-align: center;
+           }
+          .p-3{
+                margin-left:5px;
+                margin:bottom:50px;
+                width:50%;
+           }
+          .card{
+                margin-left:0px;
+          }
+      </style>
+  </head>
+  <body>
+
+		<div class="wrapper d-flex align-items-stretch p-4 pt-5">
+			<nav id="sidebar">
+				<div class="p-4 pt-5">
+                    <img src="{{user.profile.image.url}}" class="author" width="200px" height="200px" alt="">
+                    <div class="welcome p-2"><h3>Welcome {{user.first_name}}</h3>
+                        <a href="{%url 'profileview' user.profile.pk%}"></a><button class="btn btn-warning">Profile</button>
+
+                    </div>
+
+
+
+	        <ul class="list-unstyled components mb-5">
+              <li >
+	            <a href="{%url 'timeline'  %}" >Timeline</a>
+	          </li>
+	          <li >
+	            <a href="{%url 'myposts'  %}" >My Posts</a>
+	          </li>
+              <li >
+	              <a href="{%url 'friends'  %}">People</a>
+	          </li>
+	          <li  >
+              <a href="{% url 'friendslist' user.profile.id %}" >Friends</a>
+
+            </li>
+            <li>
+              <a href="{% url 'requests' %}">Requests</a>
+	          </li>
+
+	          <li class="active">
+              <a href="{% url 'inbox' %}">Inbox</a>
+	          </li>
+
+	          <li>
+              <a href="{% url 'contactus' %}">Contact Us</a>
+	          </li>
+	        </ul>
+
+	        <div class="footer">
+	        	<p>All rights reserved</p>
+
+	        </div>
+
+	      </div>
+    	</nav>
+
+            <div id="content" class="p-1 p-md-0">
+
+                <nav class="navbar navbar-inverse container " style="background-color: navajowhite;">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <img src="{% static 'main/images/logo.png' %}" alt="Dobbler Logo" class="logo">
+                        </div>
+
+                        <form class="d-flex" method="GET" action="{% url 'profile-search' %}" enctype="multipart/form-data">
+                            {%csrf_token%}
+                            <div class="input-group">
+
+                                <input type="text" id="basic-addon1"  placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" name='query' value="{{ request.GET.query }}">
+                                <button style="border: none; background-color: transparent; box-shadow: none" type="submit"><i class="fas fa-search"></i></button>
+                            </div>
+                         </form>
+                        <ul class="nav navbar-nav">
+
+
+
+                         </ul>
+                    </div>
+                </nav>
+
+
+              <div class="container">
+                  <div class="row">
+                    <div class="card col-md-12 mt-5 p-3 shadow-sm">
+                        <h3>@{{thread.user2}}-{{thread.user1}}</h3>
+                    </div>
+                  </div>
+                    {% if message_list.all.count == 0 %}
+                        <div class="row my-5">
+                            <div class="col-md-12">
+                                <p class="empty-text">No Messages</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% for message in message_list %}
+                        <div class="row">
+                            <div class="col-md-12 my-1">
+                                {% if message.user1 == request.user.profile%}
+                                    <div class="sent-message my-3">
+                                        <h4>{{ message.body }}</h4>
+                                    </div>
+                                {% elif message.user2 == request.user.profile%}
+                                    <div class="received-message my-3">
+                                        <h5>{{ message.body }}</h5>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                        <div class="row justify-content-center mt-5">
+                            <div class=>
+                                 <div class="p-3">
+                                    <form method="POST" action="{% url 'create-message' thread.pk %}" enctype="multipart/form-data">
+                                        {%csrf_token%}
+                                        <div class="message-box ">
+                                            {{form.as_p}}
+                                            <a><button class="btn btn-warning" type="submit">Send</button></a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+              </div>
+          </div>
+        </div>
+
+
+    <script src="{% static 'main/js/jquery.min.js' %}"></script>
+    <script src="{% static 'main/js/popper.js' %}"></script>
+    <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'main/js/main.js' %}"></script>
+  </body>
+</html>

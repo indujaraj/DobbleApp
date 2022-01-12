@@ -1,0 +1,171 @@
+<!doctype html>
+{%load static%}
+<html lang="en">
+  <head>
+  	<title>Dobble</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+     integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  </head>
+  <body>
+
+		<div class="wrapper d-flex align-items-stretch">
+			<nav id="sidebar">
+				<div class="p-4 pt-5">
+                    <img src="{{user.profile.image.url}}" class="author" width="200px" height="200px" alt="">
+                    <div class="welcome"><h3>Welcome {{user.first_name}}</h3>
+                        <a href="{%url 'profileview' user.profile.pk%}"><button class="btn btn-warning">Profile</button></a>
+
+                    </div>
+
+
+
+	        <ul class="list-unstyled components mb-5">
+              <li class="active">
+	            <a href="{%url 'timeline'  %}" >Timeline</a>
+	          </li>
+	          <li >
+	            <a href="{%url 'myposts'  %}" >My Posts</a>
+	          </li>
+            <li>
+	              <a href="{%url 'friends'  %}">People</a>
+	          </li>
+	          <li>
+              <a href="{% url 'friendslist' user.profile.id %}" >Friends</a>
+
+            </li>
+            <li>
+              <a href="{% url 'requests' %}">Requests</a>
+	          </li>
+
+	          <li>
+              <a href="{% url 'inbox' %}">Inbox</a>
+	          </li>
+
+	          <li>
+              <a href="{% url 'contactus' %}">Contact Us</a>
+	          </li>
+	        </ul>
+
+	        <div class="footer">
+	        	<p>All rights reserved</p>
+
+	        </div>
+
+	      </div>
+    	</nav>
+
+        <!-- Page Content  -->
+            <div id="content" class="p-1 p-md-0">
+
+                <nav class="navbar navbar-inverse container " style="background-color: navajowhite;">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <img src="{% static 'main/images/logo.png' %}" alt="Dobbler Logo" class="logo">
+                        </div>
+
+                         <form class="d-flex" method="GET" action="{% url 'profile-search' %}" enctype="multipart/form-data">
+                            {%csrf_token%}
+                            <div class="input-group">
+
+                                <input type="text" id="basic-addon1"  placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" name='query' value="{{ request.GET.query }}">
+                                <button style="border: none; background-color: transparent; box-shadow: none" type="submit"><i class="fas fa-search"></i></button>
+                            </div>
+                         </form>
+                        <ul class="nav navbar-nav">
+
+                            <li class="active"><h4><a href="{% url 'logout' %}">Logout</a></h4></li>
+
+                         </ul>
+                    </div>
+                </nav>
+
+                <div class="container p-5 mb-2 " style="border:1px solid #cecece">
+                    <div class="form-group">
+                        <form method="post" action=""enctype="multipart/form-data">
+                            {%csrf_token%}
+                            {{form.as_p}}
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <div class="d-grid gap-2 ">
+                                        <button class="btn btn-warning ms-5" type="submit">Post</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% for post in posts %}
+                <div class="container  p-2 mb-2" style="border:1px solid #cecece">
+                    <div class="col-sm-10">
+                        {%if post.author.image%}
+                        <p><img src="{{post.author.image.url}}" class="author" height="100px" width="100px" alt=""></p>
+                        {%endif%}
+                        <strong> <h3>{{post.author}}</h3></strong>
+                        <p>{{post.created}}</p>
+                        <h4>{{post.content}}</h4>
+                    </div>
+                        {%if post.image%}
+                    <p><img id='postimage' src="{{post.image.url}}" width="700px" height="500px" alt=""></p>
+                    {%endif%}
+
+                    <div class="comment-form p-2 mb-2">
+                        <form method="post" id="post-form" action="{%url 'addcomment' post.pk%}">
+                            {%csrf_token%}
+                            <div class="form-group">
+                                <input type="text" class="form-control comment-text" placeholder="Enter Comment" name="comment">
+                            </div>
+                            <button type="submit" class="btn btn-warning save-comment">Submit</button>
+                        </form>
+
+                    </div>  <!-- comment-form end-->
+                    <div class="d-flex flex-row p-2 mb-2">
+                          <div class="row">
+                              <div class="col-md-1">
+
+                                  <form method="POST" action="{% url 'like' post.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button style="background-color: transparent; border: none; box-shadow: none;" type="submit" class="like"><i class="far fa-thumbs-up"></i> <span>{{ post.likes.all.count }}</span></button>
+
+                                  </form>
+                              </div>
+
+                              <div class="col-md-1">
+                                  <form method="POST" action="{% url 'dislike' post.pk %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button style="background-color: transparent; border: none; box-shadow: none;" type="submit"><i class="far fa-thumbs-down"></i> <span>{{ post.dislikes.all.count }}</span></button>
+                                  </form>
+                              </div>
+                          </div>
+                    <div class="small-bubble  ">
+                        {%for comment in post.comment_set.all%}
+                        <div class="sent-message ">
+                            <div><h4>{{comment.user}}</h4> </div>
+                            <div>{{comment.user.profile.image}}</div>
+                            <div> {{comment.comment}}</div>
+                        </div>
+                        {%endfor%}
+
+                    </div>
+                        </div>
+                    </div>
+                {%endfor%}
+            </div>
+        </div>
+
+
+
+    <script src="{% static 'main/js/jquery.min.js' %}"></script>
+    <script src="{% static 'main/js/popper.js' %}"></script>
+    <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'main/js/main.js' %}"></script>
+  </body>
+</html>
